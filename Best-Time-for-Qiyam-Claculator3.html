@@ -1,0 +1,55 @@
+<script>
+    function calculateFifthSixth() {
+        // Get input values
+        const maghrib = document.getElementById('maghrib').value;
+        const fajr = document.getElementById('fajr').value;
+
+        // Convert times to minutes
+        const maghribMinutes = convertToMinutes(maghrib);
+        let fajrMinutes = convertToMinutes(fajr);
+
+        // Handle overnight duration
+        if (fajrMinutes < maghribMinutes) {
+            fajrMinutes += 1440; // Add 24 hours in minutes
+        }
+
+        // Calculate total night duration
+        const totalDuration = fajrMinutes - maghribMinutes;
+        const oneSixth = totalDuration / 6;
+
+        // Calculate 5th sixth
+        const startFifth = maghribMinutes + (4 * oneSixth);
+        const endFifth = maghribMinutes + (5 * oneSixth);
+
+        // Convert back to time format with rounded minutes
+        const startTime = formatTime(startFifth);
+        const endTime = formatTime(endFifth);
+
+        // Display result
+        document.getElementById('result').innerHTML = 
+            `5th Sixth of the Night: ${startTime} to ${endTime}`;
+    }
+
+    function convertToMinutes(timeString) {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+
+    function formatTime(totalMinutes) {
+        // Handle negative values (crossing midnight)
+        totalMinutes = (totalMinutes + 1440) % 1440;
+        
+        const hours = Math.floor(totalMinutes / 60);
+        let mins = Math.round(totalMinutes % 60);
+        
+        // Handle minute rollover (e.g., 60 minutes -> 1 hour)
+        if (mins === 60) {
+            mins = 0;
+            hours = (hours + 1) % 24;
+        }
+
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        return `${displayHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')} ${period}`;
+    }
+</script>
